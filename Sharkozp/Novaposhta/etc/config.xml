@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <carriers>
+            <novaposhta>
+                <enable>0</enable>
+                <sallowspecific>0</sallowspecific>
+                <model>Sharkozp\Novaposhta\Model\Carrier\Shipping</model>
+                <name>NovaPoshta Shipping Method</name>
+                <price>10.00</price>
+                <title>NovaPoshta Shipping Method</title>
+                <type>I</type>
+                <specific_error_msg>This shipping method is not available. To use this shipping method, please contact us.</specific_error_msg>
+            </novaposhta>
+        </carriers>
+    </default>
+</config>
