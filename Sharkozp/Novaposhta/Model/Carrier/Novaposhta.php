@@ -2,10 +2,19 @@
 
 namespace Sharkozp\Novaposhta\Model\Carrier;
 
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Model\Quote\Address\RateRequest;
+use Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory;
+use Magento\Quote\Model\Quote\Address\RateResult\Method;
+use Magento\Quote\Model\Quote\Address\RateResult\MethodFactory;
+use Magento\Shipping\Model\Carrier\AbstractCarrier;
+use Magento\Shipping\Model\Carrier\CarrierInterface;
 use Magento\Shipping\Model\Rate\Result;
+use Magento\Shipping\Model\Rate\ResultFactory;
+use Psr\Log\LoggerInterface;
 
-class Shipping extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements \Magento\Shipping\Model\Carrier\CarrierInterface
+class Novaposhta extends AbstractCarrier implements CarrierInterface
 
 {
 
@@ -17,19 +26,19 @@ class Shipping extends \Magento\Shipping\Model\Carrier\AbstractCarrier implement
     /**
      * Shipping constructor.
      *
-     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-     * @param \Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory $rateErrorFactory
-     * @param \Psr\Log\LoggerInterface $logger
-     * @param \Magento\Shipping\Model\Rate\ResultFactory $rateResultFactory
-     * @param \Magento\Quote\Model\Quote\Address\RateResult\MethodFactory $rateMethodFactory
+     * @param ScopeConfigInterface $scopeConfig
+     * @param ErrorFactory $rateErrorFactory
+     * @param LoggerInterface $logger
+     * @param ResultFactory $rateResultFactory
+     * @param MethodFactory $rateMethodFactory
      * @param array $data
      */
     public function __construct(
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory $rateErrorFactory,
-        \Psr\Log\LoggerInterface $logger,
-        \Magento\Shipping\Model\Rate\ResultFactory $rateResultFactory,
-        \Magento\Quote\Model\Quote\Address\RateResult\MethodFactory $rateMethodFactory,
+        ScopeConfigInterface $scopeConfig,
+        ErrorFactory $rateErrorFactory,
+        LoggerInterface $logger,
+        ResultFactory $rateResultFactory,
+        MethodFactory $rateMethodFactory,
         array $data = []
     )
     {
@@ -50,17 +59,18 @@ class Shipping extends \Magento\Shipping\Model\Carrier\AbstractCarrier implement
     /**
      * @param RateRequest $request
      * @return bool|Result
+     * @throws LocalizedException
      */
     public function collectRates(RateRequest $request)
     {
-        if (!$this->getConfigFlag('enable')) {
+        if (!$this->getConfigFlag('active')) {
             return false;
         }
 
         /** @var \Magento\Shipping\Model\Rate\Result $result */
         $result = $this->_rateResultFactory->create();
 
-        /** @var \Magento\Quote\Model\Quote\Address\RateResult\Method $method */
+        /** @var Method $method */
         $method = $this->_rateMethodFactory->create();
 
         $method->setCarrier($this->_code);
